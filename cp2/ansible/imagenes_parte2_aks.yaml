@@ -1,0 +1,44 @@
+---
+- name: Copiar imagenes segundo ejercicio en el Registry
+  hosts: all
+  become: yes
+  tasks:
+  
+    - name: Pull an image back
+      containers.podman.podman_image:
+        name: mcr.microsoft.com/oss/bitnami/redis:6.0.8
+        
+    - name: Tag image back
+      containers.podman.podman_tag:
+         image: mcr.microsoft.com/oss/bitnami/redis:6.0.8
+         target_names:
+          - cp2back
+
+    - name: Push image ACR back
+      containers.podman.podman_image:
+         name: cp2back
+         push: true
+         username: "{{ acr_usr }}"
+         password: "{{ acr_password }}"
+         push_args:
+           dest: "{{ acr_name }}"
+#FRONT    
+    - name: Pull an image front
+      containers.podman.podman_image:
+        name: mcr.microsoft.com/azuredocs/azure-vote-front:v1
+        
+    - name: Tag image front
+      containers.podman.podman_tag:
+         image: mcr.microsoft.com/azuredocs/azure-vote-front:v1
+         target_names:
+          - cp2front
+
+    - name: Push image ACR front
+      containers.podman.podman_image:
+         name: cp2front
+         push: true
+         username: "{{ acr_usr }}"
+         password: "{{ acr_password }}"
+         push_args:
+           dest: "{{ acr_name }}"
+     

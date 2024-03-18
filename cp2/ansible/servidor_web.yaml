@@ -1,0 +1,42 @@
+---
+- name: Instalar Servidor web NGINX
+  hosts: all
+  become: yes
+
+  tasks:
+  #descargar imagen
+    - name: Pull an image
+      containers.podman.podman_image:
+        name: docker.io/nginx
+#taguear imagen        
+    - name: Tag image   
+      containers.podman.podman_tag:
+         image: docker.io/nginx:latest
+         target_names:
+          - nginx:cp2
+#subir imagen al ACR
+    - name: Push image ACR
+      containers.podman.podman_image:
+         name: nginx:cp2
+         push: true
+         username: "{{ acr_usr }}"
+         password: "{{ acr_password }}"
+         push_args:
+           dest: "{{ acr_name }}"
+           
+#construir imagen           
+    - name: Build a Docker formatted image
+      containers.podman.podman_image:
+         name: nginx
+         path: /ejer1/
+         build:
+           format: docker
+#desplegar imagen                      
+    - name: Start nginx container
+      ansible.builtin.shell: podman run -d --name nginx_container -p 8080:80 nginx:cp2
+
+ #   ansible-playbook -i inventory.ini servidor_web.yaml
+
+
+     
+

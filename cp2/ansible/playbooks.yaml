@@ -1,0 +1,20 @@
+# ansible-playbook -i inventory.ini playbooks.yaml
+---
+- name: Ejecucion todos los playbooks 
+  hosts: all
+  become: yes
+  tasks:
+#cargar el fichero de variables  
+    - include_vars : 
+        file : vars.yaml
+  
+#instalacion de podamn
+- import_playbook: podman_instalar_comprobar.yaml
+#desplegar imagen del servidor web
+- import_playbook: servidor_web.yaml
+#subir imagenes al registry de Azure de la parte2 (dos imagenes para el caso)
+- import_playbook: imagenes_parte2_aks.yaml
+#desplegar las imagenes
+#- import_playbook: despliegue_parte2_aks.yaml
+
+

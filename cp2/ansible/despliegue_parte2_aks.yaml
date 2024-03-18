@@ -1,0 +1,33 @@
+#az aks get-credentials -g gruporecurso-xabi-03 -n aks-xg
+#->Merged "aks-xg" as current context in /home/vboxuser/.kube/config
+#az aks list
+#az aks check-acr --name MyManagedCluster --resource-group MyResourceGroup --acr myacr.azurecr.io
+#->Validate the ACR is accessible from the AKS cluster.
+---
+- name: Create a Service object from an inline definition
+   kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: backend
+        namespace: "example-aks1"
+      spec:
+        replicas: 1 
+        selector:
+          matchLabels:
+            app: "backend"
+        template:
+          metadata:
+            labels:
+              app: "backend"
+          spec:
+            nodeSelector:
+              kubernetes.io/os:linux
+            containers:
+            - name: "backend"
+              image: acrxabi.azurecr.io/cp2back/:latest
+
+
+

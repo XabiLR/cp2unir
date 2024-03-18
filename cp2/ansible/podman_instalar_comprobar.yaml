@@ -1,0 +1,20 @@
+---
+- name: Instalar Podman 
+  hosts: all
+  become: yes
+  tasks:
+ #instalar a Podman tiene que estar el paquete en la maquin 
+    - name: Instalar Podman 
+      apt:
+        name: podman
+        state: present
+#mostrar la version de Podman para comprobar que este instalado               
+    - name: Comprobar si está instalado y comprobar la versión
+      shell: podman --version
+      register: podman_version_output
+
+    - debug:
+        msg: "La versión de Podman instalada es {{ podman_version_output.stdout }}"
+
+
+
